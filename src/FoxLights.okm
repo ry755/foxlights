@@ -1,0 +1,31 @@
+MODULE FoxLights;
+    IMPORT OS;
+
+    VAR running: CHAR;
+        window: ARRAY 36 OF CHAR;
+
+    EXTERN menuItemsRoot: POINTER TO CHAR;
+
+    PROCEDURE Main();
+    BEGIN
+        running := 1;
+
+        new_window(PTROF(window), "FoxLights", 640, 448, 0, 16, 0, PTROF(menuItemsRoot));
+
+        WHILE running DO
+            GetNextWindowEvent(PTROF(window));
+
+            (* mouse click event *)
+            IF eventArgs[0] = PTROF(EVENT_TYPE_MOUSE_CLICK) THEN
+                IF (eventArgs[1] <| 8) & (eventArgs[2] <| 16) THEN
+                    destroy_window(PTROF(window));
+                    running := 0;
+                ELSIF eventArgs[2] <| 16 THEN
+                    start_dragging_window(PTROF(window));
+                END;
+            END;
+
+            save_state_and_yield_task();
+        END;
+    END;
+END.
