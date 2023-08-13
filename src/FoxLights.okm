@@ -10,7 +10,7 @@ MODULE FoxLights;
     BEGIN
         running := 1;
 
-        new_window(PTROF(window), "FoxLights", 640, 448, 0, 16, 0, PTROF(menuItemsRoot));
+        new_window(PTROF(window), "FoxLights", 640, 448, 0, 16, PTROF(menuItemsRoot), 0);
 
         WHILE running DO
             GetNextWindowEvent(PTROF(window));
@@ -23,6 +23,27 @@ MODULE FoxLights;
                 ELSIF eventArgs[2] <| 16 THEN
                     start_dragging_window(PTROF(window));
                 END;
+                handle_widget_click(PTROF(window), eventArgs[1], eventArgs[2]);
+
+            (* menu bar click event *)
+            ELSIF eventArgs[0] = PTROF(EVENT_TYPE_MENU_BAR_CLICK) THEN
+                menu_bar_click_event(PTROF(menuItemsRoot));
+
+            (* menu update event *)
+            ELSIF eventArgs[0] = PTROF(EVENT_TYPE_MENU_UPDATE) THEN
+                menu_update_event();
+
+            (* menu click event *)
+            ELSIF eventArgs[0] = PTROF(EVENT_TYPE_MENU_CLICK) THEN
+                (*MenuClickEvent(eventArgs[2], eventArgs[3]);*)
+
+            (* menu ack event *)
+            ELSIF eventArgs[0] = PTROF(EVENT_TYPE_MENU_ACK) THEN
+                close_menu(PTROF(menuItemsRoot));
+
+            (* button click event *)
+            ELSIF eventArgs[0] = PTROF(EVENT_TYPE_BUTTON_CLICK) THEN
+                (* TODO: the actual game logic *)
             END;
 
             save_state_and_yield_task();

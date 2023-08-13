@@ -42,7 +42,7 @@ menu_items_game_name:
     data.8 4 data.strz "Game" ; text length, text, null-terminator
 menu_items_game_list:
     data.8 1                      ; number of items
-    data.8 7                      ; menu width (usually longest item + 2)
+    data.8 10                     ; menu width (usually longest item + 2)
     data.8 8 data.strz "New Game" ; text length, text, null-terminator
 
     #include "../../fox32rom/fox32rom.def"
