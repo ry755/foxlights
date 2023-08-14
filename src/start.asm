@@ -45,5 +45,8 @@ menu_items_game_list:
     data.8 10                     ; menu width (usually longest item + 2)
     data.8 8 data.strz "New Game" ; text length, text, null-terminator
 
+titleScreen:
+    #include "title.inc"
+
     #include "../../fox32rom/fox32rom.def"
     #include "../../fox32os/fox32os.def"
