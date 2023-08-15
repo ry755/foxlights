@@ -10,11 +10,33 @@ MODULE FoxLights;
     EXTERN titleScreen: POINTER TO CHAR;
 
     PROCEDURE Main();
+    VAR i: INT;
+        button: POINTER TO Fox32OSButtonWidget;
     BEGIN
         running := 1;
         inGame := 0;
 
-        new_window(PTROF(window), "FoxLights", 640, 448, 0, 16, PTROF(menuItemsRoot), 0);
+        (* set up button structs *)
+        i := 0;
+        WHILE i <| 25 DO
+            button := PTROF(lightGrid[i]);
+
+            button^.type := WIDGET_TYPE_BUTTON;
+            IF i = 24 THEN button^.next := 0;
+            ELSE button^.next := PTROF(lightGrid[i + 1]); END;
+            button^.id := i;
+            button^.text := 0;
+            button^.fgColor := 0FF000000H;
+            button^.bgColor := 0FFFFFFFFH;
+            button^.width := 64;
+            button^.height := 64;
+            button^.x := ((i MOD 5) * 72) + 140;
+            button^.y := ((i / 5) * 72) + 64;
+
+            i := i + 1;
+        END;
+
+        new_window(PTROF(window), "FoxLights", 640, 448, 0, 16, PTROF(menuItemsRoot), PTROF(lightGrid));
         DrawTitleScreen();
 
         WHILE running DO
@@ -40,7 +62,7 @@ MODULE FoxLights;
 
             (* menu click event *)
             ELSIF eventArgs[0] = PTROF(EVENT_TYPE_MENU_CLICK) THEN
-                (*MenuClickEvent(eventArgs[2], eventArgs[3]);*)
+                MenuClickEvent(eventArgs[2], eventArgs[3]);
 
             (* menu ack event *)
             ELSIF eventArgs[0] = PTROF(EVENT_TYPE_MENU_ACK) THEN
@@ -49,7 +71,7 @@ MODULE FoxLights;
             (* button click event *)
             ELSIF eventArgs[0] = PTROF(EVENT_TYPE_BUTTON_CLICK) THEN
                 IF inGame THEN
-                    ButtonClickEvent(eventArgs[1]);
+                    InGameButtonClickEvent(eventArgs[1]);
                 END;
             END;
 
@@ -66,7 +88,21 @@ MODULE FoxLights;
         draw_str_to_overlay("use the Game menu in the upper-left corner to start a game!", 84, 316, 0FFFFFFFFH, 0FF000000H, overlay);
     END;
 
-    PROCEDURE ButtonClickEvent();
+    PROCEDURE MenuClickEvent(rootIndex, itemIndex: INT;);
+    BEGIN
+        IF (rootIndex = 0) & (itemIndex = 0) THEN
+            StartGame();
+        END;
+    END;
+
+    PROCEDURE StartGame();
+    BEGIN
+        inGame := 1;
+        fill_window(0FF000000H, PTROF(window));
+        draw_widgets_to_window(PTROF(window));
+    END;
+
+    PROCEDURE InGameButtonClickEvent();
     BEGIN
         (* TODO *)
     END;
